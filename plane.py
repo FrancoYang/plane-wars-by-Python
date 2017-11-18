@@ -4,18 +4,16 @@ import time
 import random
 
 #要用面向对象的方式做
-#定义我方飞机类
-class HeroPlane(object):
-    def __init__(self,screen_temp):
-        #设置初始位置
-        self.x=210
-        self.y=700
-        self.screen=screen_temp
-        #创建我方飞机图片
-        self.image=pygame.image.load("./images/hero1.png")
-        #存储发射的子弹
-        self.bullet_list=[]
 
+#抽取飞机基类
+
+class BasePlane(object):
+    def __init__(self,screen_temp,x,y,image_name):
+        self.x=x
+        self.y=y
+        self.screen=screen_temp
+        self.image=pygame.image.load(image_name)
+        self.bullet_list=[]
     #创建显示方法
     def display(self):
         self.screen.blit(self.image,(self.x,self.y))
@@ -26,6 +24,33 @@ class HeroPlane(object):
             #优化：判断子弹是否越界
             if bullet.judge():
                 self.bullet_list.remove(bullet)
+                
+#定义我方飞机类
+class HeroPlane(BasePlane):
+    def __init__(self,screen_temp):
+        BasePlane.__init__(self,screen_temp,210,700,"./images/hero1.png")
+
+
+        
+        #设置初始位置
+        #self.x=210
+        #self.y=700
+        #self.screen=screen_temp
+        #创建我方飞机图片
+        #self.image=pygame.image.load("./images/hero1.png")
+        #存储发射的子弹
+        #self.bullet_list=[]
+
+    #创建显示方法
+    #def display(self):
+        #self.screen.blit(self.image,(self.x,self.y))
+
+        #for bullet in self.bullet_list:
+            #bullet.display()
+            #bullet.move()
+            ##优化：判断子弹是否越界
+            #if bullet.judge():
+                #self.bullet_list.remove(bullet)
 
     #创建向左移动的方法
     def move_left(self):
@@ -39,29 +64,33 @@ class HeroPlane(object):
         self.bullet_list.append(Bullet(self.screen,self.x,self.y))
 
 #定义敌机类
-class EnemyPlane(object):
-    def __init__(self,screen_temp):
-        #设置初始位置
-        self.x=0
-        self.y=0
-        self.screen=screen_temp
-        #创建敌机图片
-        self.image=pygame.image.load("./images/enemy0.png")
-        #存储发射的子弹
-        self.bullet_list=[]
-        #存储敌机默认的移动方向
+class EnemyPlane(BasePlane):
+    def __init__(self,screen_temp):        
+        BasePlane.__init__(self,screen_temp,0,0,"./images/enemy0.png")
         self.direction="right"
+                           
+
+        #设置初始位置
+        #self.x=0
+        #self.y=0
+        #self.screen=screen_temp
+        #创建敌机图片
+        #self.image=pygame.image.load("./images/enemy0.png")
+        #存储发射的子弹
+        #self.bullet_list=[]
+        #存储敌机默认的移动方向
+        #self.direction="right"
 
     #创建显示方法
-    def display(self):
-        self.screen.blit(self.image,(self.x,self.y))
+    #def display(self):
+        #self.screen.blit(self.image,(self.x,self.y))
 
-        for bullet in self.bullet_list:
-            bullet.display()
-            bullet.move()
+        #for bullet in self.bullet_list:
+            #bullet.display()
+            #bullet.move()
             #优化：判断子弹是否越界
-            if bullet.judge():
-                self.bullet_list.remove(bullet)
+            #if bullet.judge():
+                #self.bullet_list.remove(bullet)
 
     #创建敌机移动方法
     def move(self):
@@ -84,16 +113,29 @@ class EnemyPlane(object):
         if random_num==8 or random_num==20:
             self.bullet_list.append(EnemyBullet(self.screen,self.x,self.y))
 
-#定义我方飞机子弹类
-class Bullet(object):
-    def __init__(self,screen_temp,x,y):
-        self.x=x+40
-        self.y=y-20
+#抽取子弹基类
+class BaseBullet(object):
+    def __init__(self,screen_temp,x,y,image_name):
+        self.x=x
+        self.y=y
         self.screen=screen_temp
-        self.image=pygame.image.load("./images/bullet.png")
-        
+        self.image=pygame.image.load(image_name)
     def display(self):
         self.screen.blit(self.image,(self.x,self.y))
+
+#定义我方飞机子弹类
+class Bullet(BaseBullet):
+    def __init__(self,screen_temp,x,y):
+        BaseBullet.__init__(self,screen_temp,x+40,y-20,"./images/bullet.png")
+
+        
+        #self.x=x+40
+        #self.y=y-20
+        #self.screen=screen_temp
+        #self.image=pygame.image.load("./images/bullet.png")
+        
+    #def display(self):
+        #self.screen.blit(self.image,(self.x,self.y))
 
     def move(self):
         self.y-=5
@@ -105,15 +147,18 @@ class Bullet(object):
             return False
 
 #定义敌机子弹类
-class EnemyBullet(object):
+class EnemyBullet(BaseBullet):
     def __init__(self,screen_temp,x,y):
-        self.x=x+25
-        self.y=y+40
-        self.screen=screen_temp
-        self.image=pygame.image.load("./images/bullet1.png")
+        BaseBullet.__init__(self,screen_temp,x+25,y+40,"./images/bullet1.png")
+
         
-    def display(self):
-        self.screen.blit(self.image,(self.x,self.y))
+        #self.x=x+25
+        #self.y=y+40
+        #self.screen=screen_temp
+        #self.image=pygame.image.load("./images/bullet1.png")
+        
+    #def display(self):
+        #self.screen.blit(self.image,(self.x,self.y))
 
     def move(self):
         self.y+=5
